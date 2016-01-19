@@ -1,5 +1,11 @@
+artists: {id: chararray,firstname: chararray,lastName: chararray,yearOfBirth: chararray}
+
+movies: {id: chararray,title: chararray,year: chararray,genre: chararray,summary: chararray,country: chararray,
+director:(id: chararray,last_name: chararray,first_name: chararray,year_of_birth: chararray),
+actors: {t: (id: chararray,role: chararray)}}
 
 Q2. How can we modify the movies relation to remove descriptions?
+movies_without_summary = FOREACH movies Generate id,title,year,genre,country,director,actors;
 
 Question 3 Create a relation named mUS_year that groups the titles of American movies by year. DUMP it to
 ensure it’s correct. Your results should look like the following:
@@ -9,6 +15,10 @@ ensure it’s correct. Your results should look like the following:
 (1992,{(Unforgiven),(Bad Lieutenant),(Reservoir Dogs)})
 (1994,{(Pulp Fiction)})
 [...]
+filterUSA = FILTER movies BY country == 'USA';
+newRel1 = FOREACH filterUSA GENERATE year, title;
+mUS_year = GROUP newRel1 BY year;
+
 Question 4 Create a relation named mUS_director that groups the titles of American movies by director.
 Your results should look like this:
 ((artist:1,Coppola,Sofia,1971),{(Marie Antoinette)})
@@ -17,6 +27,8 @@ irds),(Vertigo)})
 ((artist:4,Scott,Ridley,1937),{(Alien),(Gladiator),(Blade Runner)})
 ((artist:6,Cameron,James,1954),{(The Terminator),(Titanic)})
 [...]
+
+
 Question 5 Create a relation named mUS_actors that contains (movieId, actorId, role) tuples. Each
 movie will appear in as many tuples as there are actors listed for that movie. Again, we only want to take
 American movies into account. Your results should look like the following:
