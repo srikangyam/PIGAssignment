@@ -1,0 +1,122 @@
+
+Q2. How can we modify the movies relation to remove descriptions?
+
+Question 3 Create a relation named mUS_year that groups the titles of American movies by year. DUMP it to
+ensure it’s correct. Your results should look like the following:
+[...]
+(1988,{(Rain Man),(Die Hard)})
+(1990,{(The Godfather: Part III),(Die Hard 2),(The Silence of the Lambs),(King of New York)})
+(1992,{(Unforgiven),(Bad Lieutenant),(Reservoir Dogs)})
+(1994,{(Pulp Fiction)})
+[...]
+Question 4 Create a relation named mUS_director that groups the titles of American movies by director.
+Your results should look like this:
+((artist:1,Coppola,Sofia,1971),{(Marie Antoinette)})
+((artist:3,Hitchcock,Alfred,1899),{(Psycho),(North by Northwest),(Rear Window),(Marnie),(The B
+irds),(Vertigo)})
+((artist:4,Scott,Ridley,1937),{(Alien),(Gladiator),(Blade Runner)})
+((artist:6,Cameron,James,1954),{(The Terminator),(Titanic)})
+[...]
+Question 5 Create a relation named mUS_actors that contains (movieId, actorId, role) tuples. Each
+movie will appear in as many tuples as there are actors listed for that movie. Again, we only want to take
+American movies into account. Your results should look like the following:
+(movie:1,artist:15,John Ferguson)
+(movie:1,artist:16,Madeleine Elster)
+(movie:2,artist:5,Ripley)
+(movie:3,artist:109,Rose DeWitt Bukater)
+[...]
+Question 6 Create a relation named mUS_actors_full that associates the identifier of each American movie
+to the full description of each of its actors. Your results should look like the following:
+(movie:67,artist:2,Marie Antoinette,Dunst,Kirsten,)
+(movie:2,artist:5,Ripley,Weaver,Sigourney,1949)
+(movie:5,artist:11,Sean Archer/Castor Troy,Travolta,John,1954)
+(movie:17,artist:11,Vincent Vega,Travolta,John,1954)
+[...]
+Question 7 Create a relation named mUS_full that associates the full description of each American movie
+with the full description of all of its actors. First, do it using JOIN, which will work but will repeat all
+information about a movie for each of its actors:
+(movie:1,
+{(movie:1,artist:16,Madeleine Elster,Novak,Kim,1925,
+movie:1,Vertigo,1958,Drama,USA,(artist:3,Hitchcock,Alfred,1899)),
+3
+(movie:1,artist:15,John Ferguson,Stewart,James,1908,
+movie:1,Vertigo,1958,Drama,USA,(artist:3,Hitchcock,Alfred,1899))})
+[...]
+Do it again using COGROUP. You should obtain cleaner results:
+(movie:1,
+{(movie:1,Vertigo,1958,Drama,USA,(artist:3,Hitchcock,Alfred,1899))},
+{(movie:1,artist:15,John Ferguson,Stewart,James,1908),
+(movie:1,artist:16,Madeleine Elster,Novak,Kim,1925)})
+[...]
+For both versions, clean up the results even more by avoiding to needlessly repeat the movie identifier.
+Question 8 Create a relation named mUS_artists_as_actors_directors that lists, for each artist, the list of
+American movies which he directed and in which he played. The full name of the artist as well as their year
+of birth should be made available. You should get, for instance:
+[...]
+(artist:20,Eastwood,Clint,1930,artist:20,
+{(movie:8,Unforgiven,artist:20,William Munny),
+(movie:63,Million Dollar Baby,artist:20,Frankie Dunn),
+(movie:26,Absolute Power,artist:20,Luther Whitney)},
+{(movie:26,Absolute Power,artist:20),
+(movie:63,Million Dollar Baby,artist:20),
+(movie:8,Unforgiven,artist:20)})
+[...]
+Question 9—Filter UDF We now want to list the title and director of all movies for which their director’s
+first name and last name start with the same letter. To do so, you will need to write a Filter User-Defined
+Function (Filter UDF).
+ Create a project in Eclipse with one class for your Filter UDF. What JAR(s) will you have to add?
+Which version? Where do you get them? What will you put in your build.xml file to automatically
+create and upload a JAR to the hadoop cluster?
+ How do you make it so that Pig finds your JAR? How do you refer to your Filter UDF to use it?
+You should get the following output:
+(Jaws,(artist:45,Spielberg,Steven,1946))
+(The Lost World: Jurassic Park,(artist:45,Spielberg,Steven,1946))
+(Sound and Fury,(artist:138,Chabrol,Claude,1930))
+4
+Question 10 —Eval UDF We now want to list the title and the imdb.com URL of the three movies found
+in the previous question. To do so, you will write an Eval User-Defined Function (Eval UDF) that queries
+IMDB’s search function for a movie. For the movie “The Matrix Reloaded”, for instance, it will access the
+following webpage:
+http://www.imdb.com/find?q=The+Matrix+Reloaded
+Warning: make sure that you add a call to Thread.sleep(500) after you access this URL to ensure that you
+don’t query the IMDB servers too often, which could result in rcg-hadoop’s IP getting blacklisted!
+IMDB movie identifiers start with tt, followed by 7 digits. You can look for the first occurrence of such a
+string in the page (using a regular expression, for instance), and consider that it is the movie identifier of
+the first result. You can then construct the URL of the movie by using this identifier. For instance, for “The
+Matrix Reloaded”, the corresponding IMDB URL will be:
+http://www.imdb.com/title/tt0234215/
+Your objective will be to obtain the following output:
+(Jaws,http://www.imdb.com/title/tt0073195/)
+(The Lost World: Jurassic Park,http://www.imdb.com/title/tt0119567/)
+(Sound and Fury,http://www.imdb.com/title/tt0240912/)
+Question 11 — Load UDF The file artists_en.txt from the assignment4.tar.gz archive contains the
+same information as the artists_en.json file, in a different format:
+id=artist:1
+last_name=Coppola
+first_name=Sofia
+year_of_birth=1971
+--
+id=artist:2
+last_name=Dunst
+first_name=Kirsten
+year_of_birth=null
+--
+id=artist:3
+last_name=Hitchcock
+first_name=Alfred
+year_of_birth=1899
+...
+Write a Load UDF that loads the file into a new relation. Make sure that this relation contains the same data
+as artists (you can just DUMP the two relations and compare the results manually, no need to write a program
+that will compare the relations).
+5
+Question 12 — Store UDF We would like to export our tables in the XML format. Could Pig easily
+produce a well-formed XML file? What is the issue? (You are not asked to write a Store UDF, just answer
+the question ;-))
+Question 13 — Aggregate/Algebraic UDF We now want to find the description of the movie with the
+longest description. To this end, write an Algebraic UDF that finds the longest chararray from a bag of
+chararrays. Since we got rid of the movie descriptions in Question 2, you may need to reload the movies
+relation. The objective is to obtain the following result:
+(The Birds, A wealthy San Francisco socialite pursues a potential boyfriend to a small Northern
+California town that slowly takes a turn for the bizarre when birds of all kinds suddenly begin
+to attack people there in increasing numbers and with increasing viciousness.)
