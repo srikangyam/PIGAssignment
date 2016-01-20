@@ -51,6 +51,10 @@ to the full description of each of its actors. Your results should look like the
 (movie:17,artist:11,Vincent Vega,Travolta,John,1954)
 [...]
 
+newRel3 = JOIN mUS_actors BY actors::id, artists BY id;
+mUS_actors_full = FOREACH newRel3 Generate mUS_actors::id as movieID, artists::id as artistID, 
+                  artists::firstname as artFirst, artists::lastName as artLast, artists::yearOfBirth as artYOB;
+
 Question 7 Create a relation named mUS_full that associates the full description of each American movie
 with the full description of all of its actors. First, do it using JOIN, which will work but will repeat all
 information about a movie for each of its actors:
@@ -68,6 +72,15 @@ Do it again using COGROUP. You should obtain cleaner results:
 (movie:1,artist:16,Madeleine Elster,Novak,Kim,1925)})
 [...]
 For both versions, clean up the results even more by avoiding to needlessly repeat the movie identifier.
+
+filterUSAWS = FILTER movies_without_summary BY country == 'USA';
+flatAct = FOREACH filterUSAWS Generate $0..$5,FLATTEN(actors);
+coGrpM = COGROUP flatAct By id;
+newRel5 = FOREACH coGrpM GENERATE $0, FLATTEN(flatAct);
+newRel6 = Join newRel5 by flatAct::actors::id, artists by id;
+mUS_full = <Use ForEach and just ignore newRel5::flatAct::actors::role>;
+
+
 Question 8 Create a relation named mUS_artists_as_actors_directors that lists, for each artist, the list of
 American movies which he directed and in which he played. The full name of the artist as well as their year
 of birth should be made available. You should get, for instance:
