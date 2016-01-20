@@ -40,6 +40,9 @@ American movies into account. Your results should look like the following:
 (movie:2,artist:5,Ripley)
 (movie:3,artist:109,Rose DeWitt Bukater)
 [...]
+
+mUS_actors = FOREACH filterUSA GENERATE id,FLATTEN(actors);
+
 Question 6 Create a relation named mUS_actors_full that associates the identifier of each American movie
 to the full description of each of its actors. Your results should look like the following:
 (movie:67,artist:2,Marie Antoinette,Dunst,Kirsten,)
@@ -47,6 +50,7 @@ to the full description of each of its actors. Your results should look like the
 (movie:5,artist:11,Sean Archer/Castor Troy,Travolta,John,1954)
 (movie:17,artist:11,Vincent Vega,Travolta,John,1954)
 [...]
+
 Question 7 Create a relation named mUS_full that associates the full description of each American movie
 with the full description of all of its actors. First, do it using JOIN, which will work but will repeat all
 information about a movie for each of its actors:
