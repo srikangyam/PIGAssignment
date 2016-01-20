@@ -28,6 +28,9 @@ irds),(Vertigo)})
 ((artist:6,Cameron,James,1954),{(The Terminator),(Titanic)})
 [...]
 
+newRel2 = FOREACH filterUSA GENERATE title, director;
+mUS_director = GROUP newRel2 By director;
+
 
 Question 5 Create a relation named mUS_actors that contains (movieId, actorId, role) tuples. Each
 movie will appear in as many tuples as there are actors listed for that movie. Again, we only want to take
