@@ -93,6 +93,11 @@ of birth should be made available. You should get, for instance:
 (movie:63,Million Dollar Baby,artist:20),
 (movie:8,Unforgiven,artist:20)})
 [...]
+1. FilterUSA
+2. Join FilterUSA and Artists
+3. Group #2 by Tuple(artists)
+4. Filter #3 by directorid == actorid
+
 Question 9—Filter UDF We now want to list the title and director of all movies for which their director’s
 first name and last name start with the same letter. To do so, you will need to write a Filter User-Defined
 Function (Filter UDF).
